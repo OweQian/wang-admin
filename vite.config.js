@@ -12,5 +12,14 @@ export default ({mode}) => defineConfig({
     },
     extensions: ['.vue', '.js', '.jsx', '.json'],
     base: './'
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://backend-api-02.newbee.ltd/manage-api/v1',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, '')
+      }
+    }
   }
 })
