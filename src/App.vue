@@ -41,6 +41,8 @@
 <script>
   import { reactive, toRefs } from 'vue'
   import { useRouter } from 'vue-router'
+  import { localGet } from '@/utils'
+  import { noMenu, pathMap } from '@/config'
   import Header from '@/components/Header'
   import Footer from '@/components/Footer'
   export default {
@@ -50,14 +52,25 @@
       Footer
     },
     setup() {
-      const noMenu = ['/login']
       const router = useRouter()
       const state = reactive({
         showMenu: true
       })
 
-      router.beforeEach(to => {
+      router.beforeEach((to, from, next) => {
+        if (to.path === '/login') {
+          next()
+        } else {
+          if (!localGet('token')) {
+            next({
+              path: '/login'
+            })
+          } else {
+            next()
+          }
+        }
         state.showMenu = !noMenu.includes(to.path)
+        document.title = pathMap[to.name]
       })
 
       return {

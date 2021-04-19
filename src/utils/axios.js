@@ -4,7 +4,7 @@ import config from '~/config'
 import { localGet } from './index'
 import { ElMessage } from 'element-plus'
 
-axios.defaults.baseURL = config[import.meta.env.MODE].baseURL
+axios.defaults.baseURL = config[import.meta.env.MODE].baseUrl
 axios.defaults.withCredentials = true
 axios.defaults.headers['X-Requested-With'] = 'XMLHttpRequest'
 axios.defaults.headers['token'] = localGet('token') || ''
