@@ -43,8 +43,8 @@
   import { useRouter } from 'vue-router'
   import { localGet } from '@/utils'
   import { noMenu, pathMap } from '@/config'
-  import Header from '@/components/Header'
-  import Footer from '@/components/Footer'
+  import Header from '@/components/Header.vue'
+  import Footer from '@/components/Footer.vue'
   export default {
     name: 'App',
     components: {

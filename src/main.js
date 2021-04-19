@@ -12,7 +12,8 @@ import {
   ElForm,
   ElFormItem,
   ElInput,
-  ElCheckbox } from 'element-plus'
+  ElCheckbox,
+  ElCard } from 'element-plus'
 import router from '@/router'
 import 'element-plus/lib/theme-chalk/index.css'
 
@@ -31,5 +32,6 @@ app.use(ElButton)
     .use(ElFormItem)
     .use(ElInput)
     .use(ElCheckbox)
+    .use(ElCard)
 
 app.mount('#app')

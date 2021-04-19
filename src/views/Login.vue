@@ -122,6 +122,6 @@ export default {
   padding: 0;
 }
 .login-form >>> .el-form-item {
-  margin-bottom: 0;
+  margin-bottom: 12px;
 }
 </style>
