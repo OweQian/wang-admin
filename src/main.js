@@ -8,7 +8,11 @@ import {
   ElMenu,
   ElSubmenu,
   ElMenuItemGroup,
-  ElMenuItem } from 'element-plus'
+  ElMenuItem,
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElCheckbox } from 'element-plus'
 import router from '@/router'
 import 'element-plus/lib/theme-chalk/index.css'
 
@@ -23,5 +27,9 @@ app.use(ElButton)
     .use(ElSubmenu)
     .use(ElMenuItemGroup)
     .use(ElMenuItem)
+    .use(ElForm)
+    .use(ElFormItem)
+    .use(ElInput)
+    .use(ElCheckbox)
 
 app.mount('#app')
