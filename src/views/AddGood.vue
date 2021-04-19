@@ -1,12 +1,10 @@
 <template>
-  <div>
-    <el-button type="primary">主要按钮</el-button>
-  </div>
+  添加商品
 </template>
 
 <script>
 export default {
-name: "index"
+  name: "AddGood"
 }
 </script>
 
