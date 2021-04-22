@@ -13,6 +13,10 @@ import {
   ElFormItem,
   ElInput,
   ElCheckbox,
+  ElCascader,
+  ElRadio,
+  ElRadioGroup,
+  ElUpload,
   ElCard } from 'element-plus'
 import router from '@/router'
 import 'element-plus/lib/theme-chalk/index.css'
@@ -33,5 +37,9 @@ app.use(ElButton)
     .use(ElInput)
     .use(ElCheckbox)
     .use(ElCard)
+    .use(ElCascader)
+    .use(ElUpload)
+    .use(ElRadio)
+    .use(ElRadioGroup)
 
 app.mount('#app')

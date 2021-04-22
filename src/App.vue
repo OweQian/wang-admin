@@ -10,6 +10,8 @@
         </div>
         <div class="line"/>
         <el-menu
+          :default-active="currentPath"
+          :default-openeds="defaultOpen"
           background-color="#222832"
           text-color="#fff"
           :router="true">
@@ -18,8 +20,9 @@
               <span>Dashboard</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/"><i class=" el-icon-data-line"/>首页</el-menu-item>
-              <el-menu-item index="/add"><i class=" el-icon-data-line"/>添加商品</el-menu-item>
+              <el-menu-item index="/introduce"><i class="el-icon-data-line" />系统介绍</el-menu-item>
+              <el-menu-item index="/dashboard"><i class="el-icon-odometer" />Dashboard</el-menu-item>
+              <el-menu-item index="/add"><i class="el-icon-plus" />添加商品</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
@@ -54,7 +57,9 @@
     setup() {
       const router = useRouter()
       const state = reactive({
-        showMenu: true
+        defaultOpen: ['1'],
+        showMenu: true,
+        currentPath: '/dashboard'
       })
 
       router.beforeEach((to, from, next) => {
