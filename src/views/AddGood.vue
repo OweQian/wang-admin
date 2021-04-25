@@ -200,7 +200,7 @@ export default {
   width: 100%;
 }
 
-.add-container /deep/ .el-cascader {
+.add-container >>> .el-cascader {
   width: 100%;
 }
 

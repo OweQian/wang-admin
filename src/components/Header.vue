@@ -1,29 +1,74 @@
 <template>
   <div class="header">
     <div class="left">{{name}}</div>
-    <div class="right">右</div>
+    <div class="right">
+      <el-popover
+        palcement="bottom"
+        :width="320"
+        trigger="click"
+        popper-class="popper-user-box">
+        <template #reference>
+          <div class="author">
+            <i class="icon el-icon-s-custom">
+              {{userInfo && userInfo.nickName || ''}}
+              <i class="el-icon-caret-bottom"/>
+            </i>
+          </div>
+        </template>
+        <div class="nickname">
+          <p>登录名：{{userInfo && userInfo.loginUserName || ''}}</p>
+          <p>昵称：{{userInfo && userInfo.nickName || ''}}</p>
+          <el-tag size="small" effect="dark" class="logout" @click="logout">退出</el-tag>
+        </div>
+      </el-popover>
+    </div>
   </div>
 </template>
 
 <script>
-import { reactive, toRefs } from 'vue'
+import { reactive, toRefs, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from '@/utils/axios'
+import { localRemove } from '@/utils'
+import { pathMap } from '@/config'
+
 export default {
   name: 'Header',
   setup() {
     const router = useRouter()
-    const pathMap = {
-      index: '首页',
-      add: '添加商品'
-    }
     const state = reactive({
-      name: '首页'
+      name: '',
+      userInfo: null
     })
+
+    onMounted(() => {
+      const pathName = window.location.pathname.replace('/', '') || ''
+      if (!['login'].includes(pathName)) {
+        getUserInfo()
+      }
+    })
+
+    const getUserInfo = () => {
+      axios.get('/adminUser/profile').then(res => {
+        console.log(res)
+        state.userInfo = res
+      })
+    }
+
+    const logout = () => {
+      axios.delete('/logout').then(res => {
+        localRemove('token')
+        router.replace({
+          path: '/login'
+        })
+      })
+    }
     router.afterEach(to => {
       state.name = pathMap[to.name]
     })
     return {
-      ...toRefs(state)
+      ...toRefs(state),
+      logout
     }
   }
 }
@@ -37,5 +82,30 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 0 20px;
+}
+.right > div > .icon{
+  font-size: 18px;
+  margin-right: 6px;
+}
+.author {
+  margin-left: 10px;
+  cursor: pointer;
+}
+</style>
+<style>
+.popper-user-box {
+  background: url('https://s.yezgea02.com/lingling-h5/static/account-banner-bg.png') 50% 50% no-repeat!important;
+  background-size: cover!important;
+  border-radius: 0!important;
+}
+.popper-user-box .nickname {
+  position: relative;
+  color: #ffffff;
+}
+.popper-user-box .nickname .logout {
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: pointer;
 }
 </style>

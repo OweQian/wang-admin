@@ -2,9 +2,11 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import {
   ElButton,
-  ElMessage,
   ElContainer,
   ElAside,
+  ElHeader,
+  ElMain,
+  ElFooter,
   ElMenu,
   ElSubmenu,
   ElMenuItemGroup,
@@ -12,12 +14,23 @@ import {
   ElForm,
   ElFormItem,
   ElInput,
-  ElCheckbox,
-  ElCascader,
-  ElRadio,
-  ElRadioGroup,
+  ElPopover,
+  ElTag,
+  ElCard,
+  ElTable,
+  ElTableColumn,
+  ElPagination,
+  ElDialog,
+  ElPopconfirm,
   ElUpload,
-  ElCard } from 'element-plus'
+  ElLoading,
+  ElSelect,
+  ElOption,
+  ElRadioGroup,
+  ElRadio,
+  ElCascader,
+  ElCheckbox,
+  ElInputNumber } from 'element-plus'
 import router from '@/router'
 import 'element-plus/lib/theme-chalk/index.css'
 
@@ -25,21 +38,34 @@ const app = createApp(App)
 
 app.use(router)
 app.use(ElButton)
-    .use(ElMessage)
-    .use(ElContainer)
-    .use(ElAside)
-    .use(ElMenu)
-    .use(ElSubmenu)
-    .use(ElMenuItemGroup)
-    .use(ElMenuItem)
-    .use(ElForm)
-    .use(ElFormItem)
-    .use(ElInput)
-    .use(ElCheckbox)
-    .use(ElCard)
-    .use(ElCascader)
-    .use(ElUpload)
-    .use(ElRadio)
-    .use(ElRadioGroup)
+  .use(ElContainer)
+  .use(ElAside)
+  .use(ElHeader)
+  .use(ElMain)
+  .use(ElFooter)
+  .use(ElMenu)
+  .use(ElSubmenu)
+  .use(ElMenuItemGroup)
+  .use(ElMenuItem)
+  .use(ElForm)
+  .use(ElFormItem)
+  .use(ElInput)
+  .use(ElPopover)
+  .use(ElTag)
+  .use(ElCard)
+  .use(ElTable)
+  .use(ElTableColumn)
+  .use(ElPagination)
+  .use(ElDialog)
+  .use(ElPopconfirm)
+  .use(ElUpload)
+  .use(ElLoading)
+  .use(ElSelect)
+  .use(ElOption)
+  .use(ElRadioGroup)
+  .use(ElRadio)
+  .use(ElCascader)
+  .use(ElCheckbox)
+  .use(ElInputNumber)
 
 app.mount('#app')
