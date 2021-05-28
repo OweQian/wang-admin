@@ -1,6 +1,9 @@
 <template>
   <div class="header">
-    <div class="left">{{name}}</div>
+    <div class="left">
+      <i v-if="hasBack" class="el-icon-back" @click="back"></i>
+      <span style="font-size: 20px">{{name}}</span>
+    </div>
     <div class="right">
       <el-popover
         palcement="bottom"
@@ -38,8 +41,17 @@ export default {
     const router = useRouter()
     const state = reactive({
       name: '',
-      userInfo: null
+      userInfo: null,
+      hasBack: false
     })
+
+    router.afterEach(to => {
+      state.hasBack = ['level2', 'level3'].includes(to.name)
+    })
+
+    const back = () => {
+      router.back()
+    }
 
     onMounted(() => {
       const pathName = window.location.pathname.replace('/', '') || ''
@@ -68,7 +80,8 @@ export default {
     })
     return {
       ...toRefs(state),
-      logout
+      logout,
+      back
     }
   }
 }
