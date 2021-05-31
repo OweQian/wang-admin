@@ -43,6 +43,7 @@
               <el-menu-item index="/category"><i class="el-icon-menu" />分类管理</el-menu-item>
               <el-menu-item index="/good"><i class="el-icon-s-goods" />商品管理</el-menu-item>
               <el-menu-item index="/order"><i class="el-icon-s-order" />订单管理</el-menu-item>
+              <el-menu-item index="/guest"><i class="el-icon-user-solid" />会员管理</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>
