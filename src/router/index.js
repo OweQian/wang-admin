@@ -10,6 +10,7 @@ import Good from '@/views/Good.vue'
 import Order from '@/views/Order.vue'
 import OrderDetail from '@/views/OrderDetail.vue'
 import Guest from '@/views/Guest.vue'
+import Account from '@/views/Account.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [{
@@ -76,6 +77,10 @@ const router = createRouter({
     path: '/guest',
     name: 'guest',
     component: Guest
+  }, {
+    path: '/account',
+    name: 'account',
+    component: Account
   }]
 })
 
