@@ -1,5 +1,30 @@
 <template>
   <el-card class="category-container">
+    <template #header>
+      <div class="header">
+        <el-button
+          type="primary"
+          size="small"
+          icon="el-icon-plus"
+          @click="handleAdd">
+          增加
+        </el-button>
+        <el-popconfirm
+          title="确定删除吗？"
+          confirmButtonText="确定"
+          cancelButtonText="取消"
+          @confirm="handleDelete">
+          <template #reference>
+            <el-button
+              type="danger"
+              size="small"
+              icon="el-icon-plus">
+              批量删除
+            </el-button>
+          </template>
+        </el-popconfirm>
+      </div>
+    </template>
     <el-table
       :loading="loading"
       ref="multipleTable"
@@ -52,19 +77,25 @@
       :page-size="pageSize"
       :current-page="currentPage"
       @current-change="changePage"/>
+    <DialogAddCategory ref="addCate" :reload="getCategory" :type="type"/>
   </el-card>
 </template>
 
 <script>
 import { onMounted, onUnmounted, reactive, ref, toRefs } from "vue";
+import DialogAddCategory from '@/components/DialogAddCategory.vue'
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus"
 import axios from "@/utils/axios"
 export default {
   name: "Category",
+  components: {
+    DialogAddCategory
+  },
   setup() {
     const route = useRoute()
     const router = useRouter()
+    const addCate = ref(null)
     const state = reactive({
       loading: false,
       tableData: [],
@@ -73,7 +104,8 @@ export default {
       pageSize: 10,
       type: "add",
       level: 1,
-      parent_id: 0
+      parent_id: 0,
+      multipleSelection: []
     })
     const unWatch = router.afterEach(to => {
       if(['category', 'level2', 'level1'].includes(to.name)) {
@@ -86,6 +118,41 @@ export default {
     onMounted(() => {
       getCategory()
     })
+    const handleAdd = () => {
+      state.type = 'add'
+      addCate.value.openDialog()
+    }
+    const handleEdit = (id) => {
+      state.type = 'edit' // 传入弹窗组件用于弹窗 title 判断
+      addCate.value.openDialog(id)
+    }
+    const handleSelectionChange = (val) => {
+      // 多选 checkbox
+      state.multipleSelection = val
+    }
+    const handleDelete = () => {
+      if (!state.multipleSelection.length) {
+        return ElMessage.error('请选择项')
+      }
+      axios.delete('/categories', {
+        data: {
+          ids: state.multipleSelection.map(selection => selection.categoryId)
+        }
+      }).then(() => {
+        ElMessage.success('删除成功')
+        getCategory()
+      })
+    }
+    const handleDeleteOne = (id) => {
+      axios.delete('/categories', {
+        data: {
+          ids: [id]
+        }
+      }).then(() => {
+        ElMessage.success('删除成功')
+        getCategory()
+      })
+    }
     const handleNext = item => {
       const level = item.categoryLevel + 1
       if (level === 4) {
@@ -127,7 +194,13 @@ export default {
       ...toRefs(state),
       getCategory,
       changePage,
-      handleNext
+      handleNext,
+      handleSelectionChange,
+      addCate,
+      handleAdd,
+      handleEdit,
+      handleDelete,
+      handleDeleteOne
     }
   }
 }
