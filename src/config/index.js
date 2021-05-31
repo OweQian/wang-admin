@@ -11,7 +11,8 @@ export const pathMap = {
   recommend: '为你推荐配置',
   category: '分类管理',
   level2: "分类二级管理",
-  level3: "分类三级管理"
+  level3: "分类三级管理",
+  good: "商品管理",
 }
 
 export const configTypeMap = {

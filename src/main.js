@@ -68,4 +68,21 @@ app.use(ElButton)
   .use(ElCheckbox)
   .use(ElInputNumber)
 
+// 全局方法
+app.config.globalProperties.$filters = {
+  prefix (url) {
+    if (url && url.startsWith('http')) {
+      return url
+    } else {
+      url = `http://backend-api-02.newbee.ltd${url}`
+      return url
+    }
+  }
+}
+
+app.config.globalProperties.goTop = function () {
+  const main = document.querySelector(".main")
+  main.scrollTop = 0
+}
+
 app.mount('#app')

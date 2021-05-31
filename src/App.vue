@@ -22,7 +22,6 @@
             <el-menu-item-group>
               <el-menu-item index="/introduce"><i class="el-icon-data-line" />系统介绍</el-menu-item>
               <el-menu-item index="/dashboard"><i class="el-icon-odometer" />Dashboard</el-menu-item>
-              <el-menu-item index="/add"><i class="el-icon-plus" />添加商品</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
@@ -42,6 +41,7 @@
             </template>
             <el-menu-item-group>
               <el-menu-item index="/category"><i class="el-icon-menu" />分类管理</el-menu-item>
+              <el-menu-item index="/good"><i class="el-icon-s-goods" />商品管理</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>

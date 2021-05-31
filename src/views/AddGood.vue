@@ -9,8 +9,8 @@
         class="goodForm">
         <el-form-item label="商品分类" required>
           <el-cascader
-            placeholder="请选择商品分类"
-            :props="props"
+            :placeholder="defaultCate"
+            :props="category"
             @change="handleChangeCate"/>
         </el-form-item>
         <el-form-item label="商品名称" prop="goodsName">
@@ -24,11 +24,11 @@
             v-model="goodForm.goodsIntro"
             placeholder="请输入商品简介"/>
         </el-form-item>
-        <el-form-item label="商品价格" prop="goodsPrice">
+        <el-form-item label="商品价格" prop="originalPrice">
           <el-input
             type="number"
             min="0"
-            v-model="goodForm.goodsPrice"
+            v-model="goodForm.originalPrice"
             placeholder="请输入商品价格"/>
         </el-form-item>
         <el-form-item label="商品售卖价" prop="sellingPrice">
@@ -52,8 +52,8 @@
         </el-form-item>
         <el-form-item label="上架状态" prop="goodsSellStatus">
           <el-radio-group v-model="goodForm.goodsSellStatus">
-            <el-radio label="0">上架</el-radio>
-            <el-radio label="1">下架</el-radio>
+            <el-radio :label="0">上架</el-radio>
+            <el-radio :label="1">下架</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="商品主图" prop="goodsCoverImg">
@@ -61,19 +61,25 @@
             class="avatar-uploader"
             :action="uploadImgServer"
             accept="jpg,jpeg,png"
-            :show-file-list="false"
             :headers="{
               token: token
             }"
+            :show-file-list="false"
             :on-success="handleUrlSuccess"
             :before-upload="handleBeforeUpload"
           >
-            <img v-if="goodForm.goodsCoverImg" :src="goodForm.goodsCoverImg" class="avatar">
+            <img
+              v-if="goodForm.goodsCoverImg"
+              :src="goodForm.goodsCoverImg"
+              class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
+        <el-form-item label="详情内容">
+          <div ref='editor'></div>
+        </el-form-item>
         <el-form-item>
-          <el-button class="btn-submit" type="primary" @click="submitAdd">立即创建</el-button>
+          <el-button class="btn-submit" type="primary" @click="submitAdd">{{id ? '立即修改' : '立即创建'}}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -85,18 +91,30 @@ import {
   reactive,
   ref,
   toRefs,
-  onMounted
+  onMounted,
+  onBeforeUnmount,
+  getCurrentInstance
 } from 'vue'
+import WangEditor from 'wangeditor'
 import axios from '@/utils/axios'
-import {localGet, uploadImgServer} from '@/utils'
-import {ElMessage} from 'element-plus'
+import { useRouter, useRoute } from "vue-router"
+import { localGet, uploadImgServer, uploadImgsServer } from '@/utils'
+import { ElMessage } from 'element-plus'
 export default {
   name: 'AddGood',
   setup() {
+    let instance
+    const { proxy } = getCurrentInstance()
+    const editor = ref(null)
     const goodRef = ref(null)
+    const route = useRoute()
+    const router = useRouter()
+    const { id } = route.query
     const state = reactive({
-      uploadImgServer,
+      uploadImgServer, // 单图上传
       token: localGet('token') || '',
+      id: id,
+      defaultCate: '',
       goodForm: {
         goodsName: '',
         goodsIntro: '',
@@ -121,7 +139,8 @@ export default {
           { required: 'true', message: '请填写商品库存', trigger: ['change'] }
         ]
       },
-      props: {
+      categoryId: '',
+      category: {
         lazy: true,
         lazyLoad(node, resolve) {
           const { level = 0, value } = node
@@ -145,6 +164,66 @@ export default {
       }
     })
 
+    onMounted(() => {
+      instance = new WangEditor(editor.value)
+      instance.config.showLinkImg = false
+      instance.config.showLinkImgAlt = false
+      instance.config.showLinkImgHref = false
+      instance.config.uploadImgMaxSize = 2 * 1024 * 1024
+      instance.config.uploadFileName = 'file'
+      instance.config.uploadImgHeaders = {
+        token: state.token // 添加 token，否则没有权限调用上传接口
+      }
+      // 图片返回格式不同，需要自定义返回格式
+      instance.config.uploadImgHooks = {
+        // 图片上传并返回了结果，想要自己把图片插入到编辑器中
+        // 例如服务器端返回的不是 { errno: 0, data: [...] } 这种格式，可使用 customInsert
+        customInsert: function(insertImgFn, result) {
+          console.log('result', result)
+          // result 即服务端返回的接口
+          // insertImgFn 可把图片插入到编辑器，传入图片 src ，执行函数即可
+          if (result.data && result.data.length) {
+            result.data.forEach(item => insertImgFn(item))
+          }
+        }
+      }
+      instance.config.uploadImgServer = uploadImgsServer // 上传接口地址配置
+      Object.assign(instance.config, {
+        onchange() {
+          console.log('change')
+        },
+      })
+      instance.create()
+      if (id) {
+        // 获取商品信息
+        axios.get(`/goods/${id}`).then(res => {
+          const { goods, firstCategory, secondCategory, thirdCategory } = res
+          state.goodForm = {
+            goodsName: goods.goodsName,
+            goodsIntro: goods.goodsIntro,
+            originalPrice: goods.originalPrice,
+            sellingPrice: goods.sellingPrice,
+            stockNum: goods.stockNum,
+            goodsSellStatus: String(goods.goodsSellStatus),
+            goodsCoverImg: proxy.$filters.prefix(goods.goodsCoverImg),
+            tag: goods.tag
+          }
+          state.categoryId = goods.goodsCategoryId
+          state.defaultCate = `${firstCategory.categoryName}/${secondCategory.categoryName}/${thirdCategory.categoryName}`
+          if (instance) {
+            // 初始化商品详情 html
+            instance.txt.html(goods.goodsDetailContent)
+          }
+        })
+      }
+    })
+    onBeforeUnmount(() => {
+      instance.destroy()
+      instance = null
+    })
+    const handleChangeCate = (val) => {
+      state.categoryId = val[2] || 0
+    }
     const handleBeforeUpload = (file) => {
       const suffix = file.name.split('.')[1] || ''
       if (!['jpg', 'jpeg', 'png'].includes(suffix)) {
@@ -160,8 +239,17 @@ export default {
     const submitAdd = () => {
       goodRef.value.validate(valid => {
         if (valid) {
+          let httpOption
+          if (id) {
+            data.goodsId = id
+            httpOption = axios.put
+          } else {
+            httpOption = axios.post
+          }
           let data = {
+            goodsCategoryId: state.categoryId,
             goodsIntro: state.goodForm.goodsIntro,
+            goodsDetailContent: instance.txt.html(),
             goodsCoverImg: state.goodForm.goodsCoverImg,
             goodsName: state.goodForm.goodsName,
             goodsSellStatus: state.goodForm.goodsSellStatus,
@@ -170,8 +258,11 @@ export default {
             stockNum: state.goodForm.stockNum,
             tag: state.goodForm.tag
           }
-          axios.post('/goods', data).then(res => {
-            ElMessage.success('添加成功')
+          httpOption('/goods', data).then(res => {
+            ElMessage.success(id ? '修改成功' : '添加成功')
+            router.push({
+              path: '/good'
+            })
           })
         }
       })
@@ -179,6 +270,8 @@ export default {
     return {
       ...toRefs(state),
       goodRef,
+      editor,
+      handleChangeCate,
       handleBeforeUpload,
       handleUrlSuccess,
       submitAdd

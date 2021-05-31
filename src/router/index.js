@@ -6,6 +6,7 @@ import Login from '@/views/Login.vue'
 import Swiper from '@/views/Swiper.vue'
 import IndexConfig from '@/views/IndexConfig.vue'
 import Category from '@/views/Category.vue'
+import Good from '@/views/Good.vue'
 const router = createRouter({
   history: createWebHistory(),
   routes: [{
@@ -56,6 +57,10 @@ const router = createRouter({
       name: 'level3',
       component: Category
     }]
+  }, {
+    path: '/good',
+    name: 'good',
+    component: Good
   }]
 })
 
