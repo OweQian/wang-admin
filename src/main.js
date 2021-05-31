@@ -32,6 +32,7 @@ import {
   ElCheckbox,
   ElInputNumber } from 'element-plus'
 import router from '@/router'
+import { orderStatus } from '@/config'
 import 'element-plus/lib/theme-chalk/index.css'
 
 const app = createApp(App)
@@ -77,6 +78,9 @@ app.config.globalProperties.$filters = {
       url = `http://backend-api-02.newbee.ltd${url}`
       return url
     }
+  },
+  orderMap (status) {
+    return orderStatus[status] || '未知'
   }
 }
 
@@ -84,5 +88,6 @@ app.config.globalProperties.goTop = function () {
   const main = document.querySelector(".main")
   main.scrollTop = 0
 }
+
 
 app.mount('#app')

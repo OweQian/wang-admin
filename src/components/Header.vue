@@ -46,7 +46,7 @@ export default {
     })
 
     router.afterEach(to => {
-      state.hasBack = ['level2', 'level3'].includes(to.name)
+      state.hasBack = ['level2', 'level3', 'order_detail'].includes(to.name)
     })
 
     const back = () => {

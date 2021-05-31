@@ -52,8 +52,8 @@
         </el-form-item>
         <el-form-item label="上架状态" prop="goodsSellStatus">
           <el-radio-group v-model="goodForm.goodsSellStatus">
-            <el-radio :label="0">上架</el-radio>
-            <el-radio :label="1">下架</el-radio>
+            <el-radio label="0">上架</el-radio>
+            <el-radio label="1">下架</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="商品主图" prop="goodsCoverImg">
